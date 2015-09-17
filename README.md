@@ -16,3 +16,16 @@ Widespread usage of e-mail services with such absurd privacy policies has been o
 #Solution
 We will develop a fully functional email client in Java, that will utilize the PGPHelper class, along with RSA keys for encrypting and de- crypting emails. This client will also imple- ment HMAC based data integrity and authen- tication scheme. The client will maintain a database for storing contacts along with their public keys, which will be used for establish- ing a secure communication. The client will require initial setup/handshaking for acquir- ing the public keys of both parties.
 
+#Implementation Details
+
+Platform
+Java Virtual Machine (JVM)
+Cross platform since JVM is supported on Linux, Unix, Windows and Android Operating Systems
+
+Language
+• Java Programming Language
+• Structured Query Language 3.3 Components
+
+Components
+• Java Cryptographic Libraries • RSA key pairs
+• mySQL Database
