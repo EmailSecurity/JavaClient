@@ -18,14 +18,14 @@ We will develop a fully functional email client in Java, that will utilize the P
 
 #Implementation Details
 
-Platform \n
+Platform <br>
 Java Virtual Machine (JVM)
 Cross platform since JVM is supported on Linux, Unix, Windows and Android Operating Systems
 
-Language \n
+Language <br>
 • Java Programming Language
 • Structured Query Language 3.3 Components
 
-Components\n
+Components <br>
 • Java Cryptographic Libraries • RSA key pairs
 • mySQL Database
