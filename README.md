@@ -23,9 +23,9 @@ Java Virtual Machine (JVM)
 Cross platform since JVM is supported on Linux, Unix, Windows and Android Operating Systems
 
 Language <br>
-• Java Programming Language
-• Structured Query Language 3.3 Components
+• Java Programming Language<br>
+• Structured Query Language 3.3 Components<br>
 
 Components <br>
-• Java Cryptographic Libraries • RSA key pairs
+• Java Cryptographic Libraries<br> • RSA key pairs<br>
 • mySQL Database
