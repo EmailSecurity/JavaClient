@@ -2,7 +2,7 @@
 Standalone Java based email client.
 
 #Group Members
-Akash Singh and 
+Akash Singh & 
 Abhijeet Ranadive
 
 #Abstract
