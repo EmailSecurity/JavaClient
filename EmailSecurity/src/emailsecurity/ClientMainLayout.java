@@ -10,23 +10,32 @@ package emailsecurity;
  * @author akashsingh
  */
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.swing.*;
 
 
 
 public class ClientMainLayout extends JFrame {
         public ClientMainLayout() {
+            
             setTitle("Email Client");
             setSize(640, 480);
+            addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent windowEvent){
+                    System.exit(0);
+                }        
+            });
             JButton composeMail = new JButton("Compose");
-            
+            composeMail.addActionListener(new composeMailActionListener());
             JPanel toolBar = new JPanel();
             JPanel inbox = new JPanel();
             JPanel emailBody = new JPanel();
             JLabel toolBarLabel = new JLabel("Toolbar");
             JLabel inboxLabel = new JLabel("Received Emails");
             JLabel emailBodyLabel = new JLabel("Email Body");
-
+            
+            
             toolBar.add(toolBarLabel);
             toolBar.add(composeMail);
             inbox.add(inboxLabel);
