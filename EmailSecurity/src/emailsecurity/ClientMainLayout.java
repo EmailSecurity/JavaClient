@@ -9,14 +9,17 @@ package emailsecurity;
  *
  * @author akashsingh
  */
+
 import javax.swing.*;
+
 
 
 public class ClientMainLayout extends JFrame {
         public ClientMainLayout() {
             setTitle("Email Client");
             setSize(640, 480);
-         
+            JButton composeMail = new JButton("Compose");
+            
             JPanel toolBar = new JPanel();
             JPanel inbox = new JPanel();
             JPanel emailBody = new JPanel();
@@ -25,6 +28,7 @@ public class ClientMainLayout extends JFrame {
             JLabel emailBodyLabel = new JLabel("Email Body");
 
             toolBar.add(toolBarLabel);
+            toolBar.add(composeMail);
             inbox.add(inboxLabel);
             emailBody.add(emailBodyLabel);
             

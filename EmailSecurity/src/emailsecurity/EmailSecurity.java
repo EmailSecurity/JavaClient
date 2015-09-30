@@ -9,17 +9,20 @@ package emailsecurity;
  *
  * @author akashsingh
  */
+import javafx.application.Application;
 import javax.swing.*;
+
+
 public class EmailSecurity {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        ClientMainLayout sp = new ClientMainLayout();
-        sp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        sp.setVisible(true);
+        
+        ClientMainLayout c1 = new ClientMainLayout();
+        c1.show();
     }
+    
     
 }
