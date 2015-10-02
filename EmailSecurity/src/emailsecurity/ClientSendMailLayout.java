@@ -47,8 +47,10 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
        toTextField.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                toTextField.setText("");
-            }
+                if(toTextField.getText().equals("<enter email address here>")){
+                    toTextField.setText("");
+                }
+            }   
        });
        subjectTextField = new JTextField(30);
        subjectTextField.setBackground(Color.white);
@@ -57,7 +59,13 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
        subjectTextField.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                subjectTextField.setText("");
+                if(subjectTextField.getText().equals("<enter subject here>")){
+                    System.out.println("Entered if");
+                    subjectTextField.setText("");
+                }
+               else{
+                    System.out.println("Couldn't enter if");
+                }
             }
        });
        bodyTextField = new JTextArea(10, 30);
@@ -67,7 +75,9 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
        bodyTextField.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e){
-                bodyTextField.setText("");
+                if(bodyTextField.getText().equals("<enter email body here>")){
+                    bodyTextField.setText("");  
+                }
             }
        });
        constraints.gridx = 0;
@@ -110,8 +120,14 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
             this.toAddress = this.toTextField.getText();
             this.subject = this.subjectTextField.getText();
             this.body = this.bodyTextField.getText();
-            new SendEmailViaGmail(this.toAddress, this.subject, this.body);
-            this.composeWindow.dispatchEvent(new WindowEvent(this.composeWindow, WindowEvent.WINDOW_CLOSING));
+            if(this.toAddress.equals("<enter email address here>")){
+                System.out.println("Please enter a valid email address");
+            }
+            else{
+                new SendEmailViaGmail(this.toAddress, this.subject, this.body);
+                this.composeWindow.dispatchEvent(new WindowEvent(this.composeWindow, WindowEvent.WINDOW_CLOSING));
+                
+            }
        }
    
     
