@@ -33,9 +33,9 @@ public class SendEmailViaGmail {
       String to = toAddress;
 
      
-      String from = ""; //Please enter your gmail email address here
-      final String username = "";//Please enter your gmail user ID here
-      final String password = "";//Please enter your gmail password here
+      String from = "emailsecure4393@gmail.com"; //Please enter your gmail email address here
+      final String username = "emailsecure4393";//Please enter your gmail user ID here
+      final String password = "eternaldoom12";//Please enter your gmail password here
 
      
       String host = "smtp.gmail.com";

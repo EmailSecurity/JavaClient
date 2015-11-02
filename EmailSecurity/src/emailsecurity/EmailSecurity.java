@@ -10,6 +10,7 @@ package emailsecurity;
  * @author akashsingh
  * @author abhijeetranadive
  */
+import java.io.IOException;
 import javafx.application.Application;
 import javax.swing.*;
 
@@ -19,7 +20,7 @@ public class EmailSecurity {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         
         ClientMainLayout c1 = new ClientMainLayout();
         c1.show();
