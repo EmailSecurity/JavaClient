@@ -20,9 +20,12 @@ public class EmailSecurity {
     /**
      * @param args the command line arguments
      */
+    
+    static ClientMainLayout c1;
+    
     public static void main(String[] args) throws IOException {
         
-        ClientMainLayout c1 = new ClientMainLayout();
+        c1 = new ClientMainLayout();
         c1.show();
     }
     

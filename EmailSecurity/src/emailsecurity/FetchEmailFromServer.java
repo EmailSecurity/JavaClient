@@ -22,6 +22,8 @@ import javax.mail.Store;
  * @author akashsingh
  */
 public class FetchEmailFromServer {
+    String[] fileNameForEachEmail = new String[1000];
+    File[] filesForEachEmail = new File[1000];
     public FetchEmailFromServer(){
         
 		String host = "pop.gmail.com";// change accordingly
@@ -50,7 +52,11 @@ public class FetchEmailFromServer {
             // retrieve the messages from the folder in an array and print it
             Message[] messages = emailFolder.getMessages();
             System.out.println("messages.length---" + messages.length);
-            
+            for(int i = 0; i<messages.length; i++){
+                fileNameForEachEmail[i] = "inbox" + File.separator + "inboxEmail" + i + ".eml";
+                filesForEachEmail[i] = new File(fileNameForEachEmail[i]);
+                System.out.println("Creating file");
+            }
             for (int i = 0, n = messages.length; i < n; i++) {
                Message message = messages[i];
                System.out.println("---------------------------------");
@@ -65,17 +71,23 @@ public class FetchEmailFromServer {
 
             }
             try {
-                
+               for(int i = messages.length-1; i>=0; i--){ 
                 try (ObjectOutputStream objOut = new ObjectOutputStream(new
-                    FileOutputStream(new File("inboxEmails.eml")))) {
-                   
-                    for (Message message : messages) {
-                        message.writeTo(objOut);
-                        System.out.println("Writing to file");
+                    FileOutputStream(filesForEachEmail[messages.length - (i+1)]))) {
+                        messages[i].writeTo(objOut);
+                    
                     }
                 }
-               
-            }
+                EmailSecurity.c1.setVisible(false);
+                ClientMainLayout c2 = new ClientMainLayout();
+                EmailSecurity.c1 = c2;
+                EmailSecurity.c1.show();
+               }
+               /*catch(Exception e){
+                   e.printStackTrace();
+               }
+                   
+            }*/
         catch (Exception e) {
             e.printStackTrace();
         }
