@@ -7,19 +7,17 @@ package emailsecurity;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
+
+
 
 /**
  *
  * @author akashsingh
- * @author abhijeetranadive
  */
-public class composeMailActionListener implements ActionListener {
-    public void actionPerformed(ActionEvent composeButtonClick){
-        ClientSendMailLayout s1 = new ClientSendMailLayout(new JFrame());
-       
-    }
+public class ReceiveMailActionListener implements ActionListener{
+    public void actionPerformed(ActionEvent receiveButtonClick){
+        FetchEmailFromServer f1 = new FetchEmailFromServer();
 
+    }
     
-   
 }
