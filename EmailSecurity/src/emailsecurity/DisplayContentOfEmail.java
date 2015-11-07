@@ -20,7 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -30,11 +36,22 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 
-public class DisplayContentOfEmail {
+public class DisplayContentOfEmail{
+    //String body1;
    
     public DisplayContentOfEmail(String subject, int index) throws IOException{
         EmailSecurity.c1.emailBody.removeAll();
-        updateBody(subject, index);
+        try {
+            updateBody(subject, index);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        }
         EmailSecurity.c1.emailBody.validate();
         EmailSecurity.c1.emailBody.repaint();
         EmailSecurity.c1.validate();
@@ -42,8 +59,15 @@ public class DisplayContentOfEmail {
         System.out.println(EmailSecurity.c1.emailBody);
         
     }
-    public void updateBody (String subject, int index) throws IOException{
-        //JPanel updatedBody = new JPanel(new GridBagLayout());
+
+    DisplayContentOfEmail() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    public void updateBody (String subject, int index) throws IOException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException{
+        String body1;
+        
+        body1=AESCrypt.Decryption();
+         //JPanel updatedBody = new JPanel(new GridBagLayout());
             MimeMessage message;
            GridBagConstraints bodyConstraints = new GridBagConstraints(); 
            //bodyConstraints.anchor = GridBagConstraints.WEST;
@@ -85,9 +109,12 @@ public class DisplayContentOfEmail {
                             bodyConstraints.gridy = 2;
                             JLabel bodyLabel = new JLabel("Body: ");
                             EmailSecurity.c1.emailBody.add(bodyLabel, bodyConstraints);
+                            
                             bodyConstraints.gridx = 1;
                             bodyConstraints.gridy = 2;
-                            JLabel bodyField = new JLabel(message.getContent().toString());
+               
+                           // JLabel bodyField = new JLabel(message.getContent().toString());
+                            JLabel bodyField = new JLabel(body1);
                             EmailSecurity.c1.emailBody.add(bodyField,  bodyConstraints);
                             System.out.println("Reached if");
                         }
@@ -129,4 +156,7 @@ public class DisplayContentOfEmail {
         System.out.println("return");
         //return updatedBody;
     }
+   // public void getbody(){
+        //System.out.println("In getbody!");
+    //}
 }

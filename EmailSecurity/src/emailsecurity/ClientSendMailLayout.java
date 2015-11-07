@@ -21,12 +21,21 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 
 public class ClientSendMailLayout extends JFrame implements ActionListener {
     String toAddress, subject, body;
     JTextField toTextField, subjectTextField;
     JTextArea bodyTextField;
     JFrame composeWindow;
+    String ss;
+    
    public ClientSendMailLayout(JFrame composeWindow){
        
        composeWindow.setTitle("Compose");
@@ -120,7 +129,33 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent e){
             this.toAddress = this.toTextField.getText();
             this.subject = this.subjectTextField.getText();
-            this.body = this.bodyTextField.getText();
+            //this.body = this.bodyTextField.getText();
+            AESCrypt aes1 = null;
+        try {
+            aes1 = new AESCrypt();
+            } 
+        catch (NoSuchAlgorithmException ex) 
+            {
+            Logger.getLogger(ClientSendMailLayout.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String s1=this.bodyTextField.getText();
+            //String s2=aes1.encryption(s1).toString();
+            byte[] s2=AESCrypt.encryption(s1);
+            System.out.println("IN FUNCTION:" +new String(s2));
+            
+            this.body=new String(s2);
+            
+        /*try {
+            ss=AESCrypt.Decryption();
+            System.out.println("CHECKING IF STRING!!"+ss);
+            //DisplayContentOfEmail dc1=new DisplayContentOfEmail();
+            //dc1.getbody();
+            } 
+        catch (InvalidKeyException | IllegalBlockSizeException | InvalidAlgorithmParameterException | BadPaddingException ex)
+            {
+            Logger.getLogger(ClientSendMailLayout.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+           // System.out.println("DECRYPTEDDDDD :: "+aes1.Decryption(s2));
             if(this.toAddress.equals("<enter email address here>")){
                 System.out.println("Please enter a valid email address");
             }
