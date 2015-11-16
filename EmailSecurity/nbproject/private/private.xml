@@ -3,9 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/abhi/Downloads/JavaClient-current/EmailSecurity/src/emailsecurity/AESCrypt.java</file>
-            <file>file:/home/abhi/Downloads/JavaClient-current/EmailSecurity/src/emailsecurity/ClientSendMailLayout.java</file>
-            <file>file:/home/abhi/Downloads/JavaClient-current/EmailSecurity/src/emailsecurity/DisplayContentOfEmail.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/composeMailActionListener.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/EmailSecurity.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/GenerateClientInboxView.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/SendEmailViaGmail.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/ReceiveMailActionListener.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/ClientMainLayout.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/ClientSendMailLayout.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/FetchEmailFromServer.java</file>
+            <file>file:/Users/akashsingh/Documents/Project/Fall%202015%20InfoSec/working_branch/EmailSecurity/src/emailsecurity/DisplayContentOfEmail.java</file>
         </group>
     </open-files>
 </project-private>

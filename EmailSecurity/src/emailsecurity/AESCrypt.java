@@ -38,7 +38,7 @@ public class AESCrypt {
         
         try{
             Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-            //String plainBytes = "Abhijeet";
+            
              System.out.println("Original string:"+new String(plainBytes));
             // Generate the key first
            // KeyGenerator keyGen = KeyGenerator.getInstance("AES");
@@ -59,13 +59,13 @@ public class AESCrypt {
         }
         return cipherBytes;
     }
-                private static String  bytesToHex(byte[] hash) {
+    private static String  bytesToHex(byte[] hash) {
 
 	        return DatatypeConverter.printHexBinary(hash);
 
-	    }
+    }
                 
-                public static String Decryption() throws InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException{
+    public static String Decryption() throws InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException{
                     
             cipher.init(Cipher.DECRYPT_MODE,key, cipher.getParameters());
             plainBytesDecrypted = cipher.doFinal(cipherBytes);
@@ -73,5 +73,5 @@ public class AESCrypt {
             System.out.println("Decrypted data : "+new String(plainBytesDecrypted)); 
              // System.out.println();
             return(new String(plainBytesDecrypted));
-                }
+    }
 }
