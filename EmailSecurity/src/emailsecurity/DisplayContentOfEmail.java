@@ -18,9 +18,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.util.Base64;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -28,13 +38,26 @@ import javax.mail.NoSuchProviderException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
+import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.InvalidCipherTextException;
 
 
-public class DisplayContentOfEmail {
+public class DisplayContentOfEmail{
+    //String body1;
    
     public DisplayContentOfEmail(String subject, int index) throws IOException{
         EmailSecurity.c1.emailBody.removeAll();
-        updateBody(subject, index);
+        try {
+            updateBody(subject, index);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidAlgorithmParameterException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
+        }
         EmailSecurity.c1.emailBody.validate();
         EmailSecurity.c1.emailBody.repaint();
         EmailSecurity.c1.validate();
@@ -42,8 +65,14 @@ public class DisplayContentOfEmail {
         System.out.println(EmailSecurity.c1.emailBody);
         
     }
-    public void updateBody (String subject, int index) throws IOException{
-        //JPanel updatedBody = new JPanel(new GridBagLayout());
+
+    DisplayContentOfEmail() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    public void updateBody (String subject, int index) throws IOException, InvalidKeyException, IllegalBlockSizeException, InvalidAlgorithmParameterException, BadPaddingException{
+        
+        //body1=AESCrypt.Decryption();
+         //JPanel updatedBody = new JPanel(new GridBagLayout());
             MimeMessage message;
            GridBagConstraints bodyConstraints = new GridBagConstraints(); 
            //bodyConstraints.anchor = GridBagConstraints.WEST;
@@ -85,9 +114,14 @@ public class DisplayContentOfEmail {
                             bodyConstraints.gridy = 2;
                             JLabel bodyLabel = new JLabel("Body: ");
                             EmailSecurity.c1.emailBody.add(bodyLabel, bodyConstraints);
+                            
                             bodyConstraints.gridx = 1;
                             bodyConstraints.gridy = 2;
-                            JLabel bodyField = new JLabel(message.getContent().toString());
+                            String temp = message.getContent().toString();
+                            String messagesReturned = decryptBodyOfEmail(temp);
+                            JLabel bodyField = new JLabel(messagesReturned);
+                            //JLabel bodyField = new JLabel(body1);
+                            
                             EmailSecurity.c1.emailBody.add(bodyField,  bodyConstraints);
                             System.out.println("Reached if");
                         }
@@ -129,4 +163,33 @@ public class DisplayContentOfEmail {
         System.out.println("return");
         //return updatedBody;
     }
+   public String decryptBodyOfEmail(String incomingMessage) throws UnsupportedEncodingException, DataLengthException, InvalidCipherTextException{
+       String body1;
+       AESBouncyCastle a = new AESBouncyCastle();
+       int lengthOfIncoming = incomingMessage.length();
+       //System.out.println("Length of message incoming =" + lengthOfIncoming);
+       String ivInString = incomingMessage.substring(0, 24);
+       String keyInString= incomingMessage.substring(27, 51);
+       String lengthOfCipherText = incomingMessage.substring(51, 53);
+       int lengthOfCipherTextInt = Integer.parseInt(lengthOfCipherText);
+       System.out.println("Length of Cipher text= " + lengthOfCipherTextInt);
+       String encryptedBodyInString = incomingMessage.substring(62, 62+lengthOfCipherTextInt);
+       System.out.println("Incoming Encrypted Message:" + encryptedBodyInString);
+       System.out.println("IV: " + ivInString);
+       System.out.println("Key: " + keyInString);
+       System.out.println("body: " + encryptedBodyInString);
+       byte[] decodedIV = Base64.getDecoder().decode(ivInString);
+       SecretKey originalIV = new SecretKeySpec(decodedIV, "AES");
+       byte[] decodedKey = Base64.getDecoder().decode(keyInString);
+       SecretKey originalKey = new SecretKeySpec(decodedKey, "AES");
+       //System.out.println("IV encoded: " + originalIV.getEncoded());
+       //System.out.println("Key encoded: " + originalKey.getEncoded());
+       a.setKeyAndIV(originalKey.getEncoded(), originalIV.getEncoded());
+       byte[] encryptedBodyInBytes = Base64.getDecoder().decode(encryptedBodyInString);
+       byte[] decryptedBodyInBytes = a.decrypt(encryptedBodyInBytes);
+       String decryptedBodyInString = new String(decryptedBodyInBytes, "UTF-8");
+       System.out.println("--------------");
+       System.out.println("decrypted body: " + decryptedBodyInString);
+       return decryptedBodyInString;  
+   }
 }
