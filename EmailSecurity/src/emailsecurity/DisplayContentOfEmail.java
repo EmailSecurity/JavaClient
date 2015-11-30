@@ -13,6 +13,7 @@ package emailsecurity;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.DataInputStream;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +24,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -163,24 +169,35 @@ public class DisplayContentOfEmail{
         System.out.println("return");
         //return updatedBody;
     }
-   public String decryptBodyOfEmail(String incomingMessage) throws UnsupportedEncodingException, DataLengthException, InvalidCipherTextException{
-       String body1;
-       AESBouncyCastle a = new AESBouncyCastle();
-       int lengthOfIncoming = incomingMessage.length();
-       //System.out.println("Length of message incoming =" + lengthOfIncoming);
-       String ivInString = incomingMessage.substring(0, 24);
-       String keyInString= incomingMessage.substring(27, 51);
-       String lengthOfCipherText = incomingMessage.substring(51, 53);
-       int lengthOfCipherTextInt = Integer.parseInt(lengthOfCipherText);
-       System.out.println("Length of Cipher text= " + lengthOfCipherTextInt);
-       String encryptedBodyInString = incomingMessage.substring(62, 62+lengthOfCipherTextInt);
-       System.out.println("Incoming Encrypted Message:" + encryptedBodyInString);
-       System.out.println("IV: " + ivInString);
-       System.out.println("Key: " + keyInString);
-       System.out.println("body: " + encryptedBodyInString);
-       byte[] decodedIV = Base64.getDecoder().decode(ivInString);
-       SecretKey originalIV = new SecretKeySpec(decodedIV, "AES");
-       byte[] decodedKey = Base64.getDecoder().decode(keyInString);
+   public String decryptBodyOfEmail(String incomingMessage) throws UnsupportedEncodingException, DataLengthException, InvalidCipherTextException, Exception{
+        String body1;
+        AESBouncyCastle a = new AESBouncyCastle();
+        int lengthOfIncoming = incomingMessage.length();
+        //System.out.println("Length of message incoming =" + lengthOfIncoming);
+        String RSAEncryptedKey = incomingMessage.substring(0, 172);
+        String IVInString = incomingMessage.substring(175, 199);
+        String lengthOfCipherText = incomingMessage.substring(199, 201);
+        int lengthOfCipherTextInt = Integer.parseInt(lengthOfCipherText);
+        System.out.println("Length of Cipher text= " + lengthOfCipherTextInt);
+        String encryptedBodyInString = incomingMessage.substring(210, 210+lengthOfCipherTextInt);
+        System.out.println("Incoming Encrypted Message:" + encryptedBodyInString);
+        System.out.println("IV: " + IVInString);
+        //System.out.println("Key: " + keyInString);
+        System.out.println("body: " + encryptedBodyInString);
+        byte[] decodedIV = Base64.getDecoder().decode(IVInString);
+        SecretKey originalIV = new SecretKeySpec(decodedIV, "AES");
+        //PublicKey publicKeyOfReceiver;
+        PrivateKey privateKeyOfReceiver;
+            
+        //publicKeyOfReceiver = readRSAPublicKey();
+        privateKeyOfReceiver = readRSAPrivateKey();
+        //String publicKeyString = Base64.getEncoder().encodeToString(publicKeyOfReceiver.getEncoded());//readFileAsString("id_rsa.pub");
+        String privateKeyString = Base64.getEncoder().encodeToString(privateKeyOfReceiver.getEncoded());//readFileAsString("id_rsa");
+        RSABouncyCastle rsa = new RSABouncyCastle(); 
+        byte[] decryptedKey = rsa.decrypt(Base64.getDecoder().decode(RSAEncryptedKey), privateKeyString);
+        String decryptedKeyInString = Base64.getEncoder().encodeToString(decryptedKey);
+            
+       byte[] decodedKey = Base64.getDecoder().decode(decryptedKeyInString);
        SecretKey originalKey = new SecretKeySpec(decodedKey, "AES");
        //System.out.println("IV encoded: " + originalIV.getEncoded());
        //System.out.println("Key encoded: " + originalKey.getEncoded());
@@ -192,4 +209,31 @@ public class DisplayContentOfEmail{
        System.out.println("decrypted body: " + decryptedBodyInString);
        return decryptedBodyInString;  
    }
+        public PublicKey readRSAPublicKey() throws Exception{
+            File publicKeyFile = new File("id_rsa.pub");
+            FileInputStream pubFS = new FileInputStream(publicKeyFile);
+            DataInputStream pubDS = new DataInputStream(pubFS);
+            byte[] keyBytes = new byte[(int)publicKeyFile.length()];
+            pubDS.readFully(keyBytes);
+            pubDS.close();
+            
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            PublicKey publicKey = kf.generatePublic(spec);
+            
+            return publicKey;
+        }
+        public PrivateKey readRSAPrivateKey() throws Exception{
+            File privateKeyFile = new File("private_key" + File.separator + "id_rsa");
+            FileInputStream priFS = new FileInputStream(privateKeyFile);
+            DataInputStream priDS = new DataInputStream(priFS);
+            byte[] keyBytesPrivate = new byte[(int)privateKeyFile.length()];
+            priDS.readFully(keyBytesPrivate);
+            priDS.close();
+
+            PKCS8EncodedKeySpec spec2 = new PKCS8EncodedKeySpec(keyBytesPrivate);
+            KeyFactory kf2 = KeyFactory.getInstance("RSA");
+            PrivateKey privateKey = kf2.generatePrivate(spec2);
+            return privateKey;
+        }
 }
