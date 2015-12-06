@@ -15,6 +15,11 @@ package emailsecurity;
  * and open the template in the editor.
  */
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -27,15 +32,50 @@ import javax.activation.*;
  */
 public class SendEmailViaGmail {
     
-    public SendEmailViaGmail(String toAddress,String subject,String body) {
+    String from;// = "emailsecure4393@gmail.com"; //Please enter your gmail email address here
+    String username;// = "emailsecure4393";//Please enter your gmail user ID here
+    String password;// = "eternaldoom12";//Please enter your gmail password here
+    
+    public void fetchAccountDetails(){
+        
+        try(BufferedReader br = new BufferedReader(new FileReader("accountDetailsFile.txt"))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            int i = 0;
+            while (i<3 && line != null){
+                if(i==0){
+                    this.from = line;
+                }
+                else if(i==1){
+                    this.username = line;
+                }
+                else if(i==2){
+                    this.password = line;
+                }
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+                i++;
+            }
+            String everything = sb.toString();
+            System.out.println(this.from + this.username + this.password);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        
+    }
+    
+    public SendEmailViaGmail(String toAddress,String subject,String body) throws IOException {
       
       
       String to = toAddress;
-
+      fetchAccountDetails();
      
-      String from = "emailsecure4393@gmail.com"; //Please enter your gmail email address here
-      final String username = "emailsecure4393";//Please enter your gmail user ID here
-      final String password = "eternaldoom12";//Please enter your gmail password here
+      String from = this.from;//"emailsecure4393@gmail.com"; //Please enter your gmail email address here
+      final String username = this.username;//"emailsecure4393";//Please enter your gmail user ID here
+      final String password = this.password;//"eternaldoom12";//Please enter your gmail password here
 
      
       String host = "smtp.gmail.com";

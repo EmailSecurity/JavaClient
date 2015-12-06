@@ -113,7 +113,7 @@ public class GenerateClientInboxView {
                     if (e.getClickCount() == 2) {
                         String selectedItem = (String) listOfEmails.getSelectedValue();
                         int location = listOfEmails.getSelectedIndex();
-                        System.out.println(location);
+                        System.out.println(selectedItem);
                         try {
                             DisplayContentOfEmail displaycontent = new DisplayContentOfEmail(selectedItem, location);
                         } catch (IOException ex) {
