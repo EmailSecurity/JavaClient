@@ -53,6 +53,8 @@ public class ClientMainLayout extends JFrame {
             composeMail.addActionListener(new composeMailActionListener());
             JButton receiveMail = new JButton("Fetch Mail");
             receiveMail.addActionListener(new ReceiveMailActionListener());
+            JButton sendPublicKey = new JButton("Send Keys");
+            sendPublicKey.addActionListener(new SendPublicKeysActionListener());
             JPanel toolBar = new JPanel();
             /*JPanel inbox = new JPanel(new GridBagLayout());*/
             this.emailBody = new JPanel(new GridBagLayout());
@@ -64,6 +66,7 @@ public class ClientMainLayout extends JFrame {
             toolBar.add(toolBarLabel);
             toolBar.add(composeMail);
             toolBar.add(receiveMail);
+            toolBar.add(sendPublicKey);
             
             this.emailBody.add(emailBodyLabel);
             

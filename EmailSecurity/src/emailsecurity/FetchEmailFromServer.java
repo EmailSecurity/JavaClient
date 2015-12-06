@@ -5,9 +5,11 @@
  */
 package emailsecurity;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
 import javax.mail.Folder;
@@ -24,19 +26,49 @@ import javax.mail.Store;
 public class FetchEmailFromServer {
     String[] fileNameForEachEmail = new String[1000];
     File[] filesForEachEmail = new File[1000];
+    String from, username, password;
+    public void fetchAccountDetails(){
+        
+        try(BufferedReader br = new BufferedReader(new FileReader("accountDetailsFile.txt"))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            int i = 0;
+            while (i<3 && line != null){
+                if(i==0){
+                    this.from = line;
+                }
+                else if(i==1){
+                    this.username = line;
+                }
+                else if(i==2){
+                    this.password = line;
+                }
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+                i++;
+            }
+            String everything = sb.toString();
+            System.out.println(this.from + this.username + this.password);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     public FetchEmailFromServer(){
         
 		String host = "pop.gmail.com";// change accordingly
                 String mailStoreType = "pop3";
-                String username = "emailsecure4393@gmail.com";// change accordingly
-                String password = "eternaldoom12";// change accordingly
+                String username = this.from;//"emailsecure4393@gmail.com";// change accordingly
+                String password = this.password;//"eternaldoom12";// change accordingly
 
                 check(host, mailStoreType, username, password);
     }
     public void check(String host, String storeType, String user, String password) {
-
+            fetchAccountDetails();
 		try {
-
+                    System.out.println(this.from);
+                    System.out.println(this.password);
             //create properties field
             Properties props = new Properties();
 
@@ -44,7 +76,7 @@ public class FetchEmailFromServer {
 
             Session session = Session.getDefaultInstance(props, null);
             Store store = session.getStore("imaps");
-            store.connect("imap.gmail.com", "emailsecure4393@gmail.com", "eternaldoom12");
+            store.connect("imap.gmail.com", this.from, this.password);
             //create the folder object and open it
             Folder emailFolder = store.getFolder("INBOX");
             emailFolder.open(Folder.READ_ONLY);

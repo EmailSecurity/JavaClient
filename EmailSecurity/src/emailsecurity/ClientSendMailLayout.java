@@ -26,6 +26,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -46,7 +47,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.params.KeyParameter;
 
 public class ClientSendMailLayout extends JFrame implements ActionListener {
     String toAddress, subject, body;
@@ -151,6 +156,7 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
             //this.body = this.bodyTextField.getText();
             KeyGenerator key;
             KeyGenerator iv;
+            KeyGenerator mKey;
             byte[] ivValue = new byte[16];
             byte[] ivTemp = new byte[16];
             //SecretKey sKey;
@@ -161,12 +167,19 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
             iv = KeyGenerator.getInstance("AES");
             iv.init(128);
             SecretKey siv = iv.generateKey();
+            mKey = KeyGenerator.getInstance("AES");
+            mKey.init(128);
+            SecretKey macKey = mKey.generateKey();
+            
+            Digest digest = new SHA256Digest();
+            HMac hmac = new HMac(digest);
+            hmac.init(new KeyParameter(macKey.getEncoded()));
             
             System.out.println("IVTEMP = " + ivTemp);
             AESBouncyCastle a = new AESBouncyCastle();
             a.setKeyAndIV(sKey.getEncoded(), siv.getEncoded());
            
-            String messageInString = this.bodyTextField.getText();
+            String messageInString = Base64.getEncoder().encodeToString(macKey.getEncoded()) + this.bodyTextField.getText();
             byte[] messageInBytes = messageInString.getBytes("UTF-8");
             
             byte[] encMessageInBytes = a.encrypt(messageInBytes);
@@ -177,8 +190,12 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
                 System.out.println(messageInBytes[i]);
             }
             System.out.println(temp);
+            hmac.update(Base64.getDecoder().decode(encMessageInString), 0, Base64.getDecoder().decode(encMessageInString).length);
+            byte[] macTagInBytes = new byte[digest.getDigestSize()];
+            hmac.doFinal(macTagInBytes, 0);
+            String tagInString = Base64.getEncoder().encodeToString(macTagInBytes);
             //this.body = Base64.getEncoder().encodeToString(siv.getEncoded())+ "---" + Base64.getEncoder().encodeToString(sKey.getEncoded()) + encMessageInString.length() + "Separator" + encMessageInString;
-            
+            System.out.println("Size of tag in string = " + tagInString.length());
             
              /*------------------For Troubleshooting AES Decryption Errors-------------------
                     String ivInString = Base64.getEncoder().encodeToString(siv.getEncoded());
@@ -211,13 +228,17 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
                     byte[] encryptedKey = rsa.encrypt(sKey.getEncoded(), publicKeyString);
                     String encryptedKeyInString = Base64.getEncoder().encodeToString(encryptedKey);
                     System.out.println("RSA Encrypted key = " + encryptedKeyInString);
+                    //byte[] encryptedMacKey = rsa.encrypt(macKey.getEncoded(), publicKeyString);
+                    //String encryptedMacKeyInString = Base64.getEncoder().encodeToString(encryptedMacKey);
                     
                     //byte[] decryptedKey = rsa.decrypt(encryptedKey, privateKeyString);
                     //String decryptedKeyInString = Base64.getEncoder().encodeToString(decryptedKey);//new String(decryptedKey, "UTF-8");//Base64.getEncoder().encodeToString(decryptedKey);
                     //System.out.println("RSA Devrypted Key = " + decryptedKeyInString);
-                    System.out.println("Size of encrypted String = " + encryptedKeyInString.length());
-                    this.body = encryptedKeyInString + "---" + Base64.getEncoder().encodeToString(siv.getEncoded()) + encMessageInString.length() + "Separator" + encMessageInString;
-                    
+                    //System.out.println("Size of encrypted String = " + encryptedKeyInString.length());
+                    String sizeOfEncMessage = String.format("%04d", encMessageInString.length());
+                    //System.out.println("Size of key = " + encryptedKeyInString.length() + "Size of mac key = " + encryptedMacKeyInString.length() + "Size of tag" + tagInString.length());
+                    this.body = encryptedKeyInString + "*#*" + tagInString + "*#*" + Base64.getEncoder().encodeToString(siv.getEncoded()) + "*#*" + sizeOfEncMessage + "*#*" + encMessageInString;
+                    System.out.println("Total message length = " + this.body.length());
                 } catch (Exception ex) {
                     Logger.getLogger(ClientSendMailLayout.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -238,7 +259,11 @@ public class ClientSendMailLayout extends JFrame implements ActionListener {
                 System.out.println("Please enter a valid email address");
             }
             else{
-                new SendEmailViaGmail(this.toAddress, this.subject, this.body);
+                try {
+                    new SendEmailViaGmail(this.toAddress, this.subject, this.body);
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientSendMailLayout.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 this.composeWindow.dispatchEvent(new WindowEvent(this.composeWindow, WindowEvent.WINDOW_CLOSING));
                 
             }

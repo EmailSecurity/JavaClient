@@ -10,9 +10,11 @@ package emailsecurity;
  * @author akashsingh
  */
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.security.Key;
@@ -31,8 +33,28 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 
 public class RSABouncyCastleKeyGeneration {
-    public RSABouncyCastleKeyGeneration(){ 
-        File tempPublicKey = new File("public_keys" + File.separator + "emailsecure4393@gmail.com");
+    String publicKeyFileName;
+    public void fetchAccountDetails() throws IOException{
+        
+        try(BufferedReader br = new BufferedReader(new FileReader("accountDetailsFile.txt"))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+            int i = 0;
+            while (i==0 && line != null){
+                
+                    this.publicKeyFileName = line;
+                
+                i++;
+            }
+            String everything = sb.toString();
+            System.out.println(this.publicKeyFileName);// + this.username + this.password);
+        }
+        
+        
+    }
+    public RSABouncyCastleKeyGeneration() throws IOException{ 
+        fetchAccountDetails();
+        File tempPublicKey = new File("public_keys" + File.separator + this.publicKeyFileName);
         File tempPrivateKey = new File("private_key" + File.separator + "id_rsa");
         if(!tempPublicKey.exists() && !tempPrivateKey.exists()){
     try{

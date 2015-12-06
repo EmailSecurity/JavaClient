@@ -45,7 +45,11 @@ import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 import org.bouncycastle.crypto.DataLengthException;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.InvalidCipherTextException;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.params.KeyParameter;
 
 
 public class DisplayContentOfEmail{
@@ -53,6 +57,14 @@ public class DisplayContentOfEmail{
    
     public DisplayContentOfEmail(String subject, int index) throws IOException{
         EmailSecurity.c1.emailBody.removeAll();
+        System.out.println("subject = " + subject);
+        if(subject.equals("RSA Key")){
+            System.out.println("Entered if");
+            StoreIncomingRSAKey s1 = new StoreIncomingRSAKey(new JFrame(), index);
+            
+        }
+        else{
+            System.out.println("Entered else");
         try {
             updateBody(subject, index);
         } catch (InvalidKeyException ex) {
@@ -64,12 +76,13 @@ public class DisplayContentOfEmail{
         } catch (BadPaddingException ex) {
             Logger.getLogger(DisplayContentOfEmail.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         EmailSecurity.c1.emailBody.validate();
         EmailSecurity.c1.emailBody.repaint();
         EmailSecurity.c1.validate();
         EmailSecurity.c1.repaint();
         System.out.println(EmailSecurity.c1.emailBody);
-        
+        }
     }
 
     DisplayContentOfEmail() {
@@ -171,19 +184,33 @@ public class DisplayContentOfEmail{
     }
    public String decryptBodyOfEmail(String incomingMessage) throws UnsupportedEncodingException, DataLengthException, InvalidCipherTextException, Exception{
         String body1;
+        System.out.println("Incoming message = \n" + incomingMessage + "\nEnd");
         AESBouncyCastle a = new AESBouncyCastle();
         int lengthOfIncoming = incomingMessage.length();
         //System.out.println("Length of message incoming =" + lengthOfIncoming);
         String RSAEncryptedKey = incomingMessage.substring(0, 172);
-        String IVInString = incomingMessage.substring(175, 199);
-        String lengthOfCipherText = incomingMessage.substring(199, 201);
+        System.out.println("1 = " + RSAEncryptedKey);
+        //String RSAEncryptedMacKey = incomingMessage.substring(175, 338) + incomingMessage.substring(340, 349);
+        //System.out.println("2 = " + RSAEncryptedMacKey);
+        //System.out.println("Char at 335 & 336 = " + incomingMessage.charAt(338) + incomingMessage.charAt(339));
+        String tagInString = incomingMessage.substring(175, 219);
+        System.out.println("3 = " + tagInString);
+        String IVInString = incomingMessage.substring(222, 246);//(388, 412);//(175, 199);
+        System.out.println("4 = " + IVInString);
+        String lengthOfCipherText = incomingMessage.substring(249, 253);//(412, 415);
+        System.out.println("5 = " + lengthOfCipherText);
         int lengthOfCipherTextInt = Integer.parseInt(lengthOfCipherText);
         System.out.println("Length of Cipher text= " + lengthOfCipherTextInt);
-        String encryptedBodyInString = incomingMessage.substring(210, 210+lengthOfCipherTextInt);
-        System.out.println("Incoming Encrypted Message:" + encryptedBodyInString);
-        System.out.println("IV: " + IVInString);
+        String encryptedBodyInString = incomingMessage.substring(256, 256+lengthOfCipherTextInt);
+        System.out.println("6 = " + encryptedBodyInString);
+        //String RSAEncryptedMacKey = incomingMessage.substring(212+lengthOfCipherTextInt, 212+lengthOfCipherTextInt+174);
+        //System.out.println("Mac Key in String = " + RSAEncryptedMacKey);
+        //String tagInString = incomingMessage.substring(212+lengthOfCipherTextInt+174, 212+lengthOfCipherTextInt+174+44);
+        //System.out.println("Incoming tag = " + tagInString);
+        //System.out.println("Incoming Encrypted Message:" + encryptedBodyInString);
+        //System.out.println("IV: " + IVInString);
         //System.out.println("Key: " + keyInString);
-        System.out.println("body: " + encryptedBodyInString);
+        //System.out.println("body: " + encryptedBodyInString);
         byte[] decodedIV = Base64.getDecoder().decode(IVInString);
         SecretKey originalIV = new SecretKeySpec(decodedIV, "AES");
         //PublicKey publicKeyOfReceiver;
@@ -194,6 +221,9 @@ public class DisplayContentOfEmail{
         //String publicKeyString = Base64.getEncoder().encodeToString(publicKeyOfReceiver.getEncoded());//readFileAsString("id_rsa.pub");
         String privateKeyString = Base64.getEncoder().encodeToString(privateKeyOfReceiver.getEncoded());//readFileAsString("id_rsa");
         RSABouncyCastle rsa = new RSABouncyCastle(); 
+        //byte[] decryptedMacKey = rsa.decrypt(Base64.getDecoder().decode(RSAEncryptedMacKey), privateKeyString);
+        //String decryptedMacKeyInString = Base64.getEncoder().encodeToString(decryptedMacKey);
+        
         byte[] decryptedKey = rsa.decrypt(Base64.getDecoder().decode(RSAEncryptedKey), privateKeyString);
         String decryptedKeyInString = Base64.getEncoder().encodeToString(decryptedKey);
             
@@ -204,9 +234,26 @@ public class DisplayContentOfEmail{
        a.setKeyAndIV(originalKey.getEncoded(), originalIV.getEncoded());
        byte[] encryptedBodyInBytes = Base64.getDecoder().decode(encryptedBodyInString);
        byte[] decryptedBodyInBytes = a.decrypt(encryptedBodyInBytes);
-       String decryptedBodyInString = new String(decryptedBodyInBytes, "UTF-8");
+       String decryptedBodyInString_temp = new String(decryptedBodyInBytes, "UTF-8");
+       String macKeyInString = decryptedBodyInString_temp.substring(0, 24);
+       String decryptedBodyInString = decryptedBodyInString_temp.substring(24, decryptedBodyInString_temp.length());
        System.out.println("--------------");
        System.out.println("decrypted body: " + decryptedBodyInString);
+       byte[] macKeyInBytes = Base64.getDecoder().decode(macKeyInString);
+       SecretKey macKey = new SecretKeySpec(macKeyInBytes, "AES");
+        Digest digest = new SHA256Digest();
+        HMac hmac = new HMac(digest);
+        hmac.init(new KeyParameter(macKey.getEncoded()));
+        hmac.update(Base64.getDecoder().decode(encryptedBodyInString), 0, Base64.getDecoder().decode(encryptedBodyInString).length);
+        byte[] macTagInBytes = new byte[digest.getDigestSize()];
+        hmac.doFinal(macTagInBytes, 0);
+        String tagCalculatedInString = Base64.getEncoder().encodeToString(macTagInBytes);
+        if(tagInString.equals(tagCalculatedInString)){
+            System.out.println("Tags match!");
+        }
+        else{
+            System.out.println("Tags don't match!");
+        }
        return decryptedBodyInString;  
    }
         public PublicKey readRSAPublicKey() throws Exception{
