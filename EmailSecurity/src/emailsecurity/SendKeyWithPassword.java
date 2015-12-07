@@ -170,7 +170,7 @@ public class SendKeyWithPassword extends JFrame implements ActionListener {
             
                 byte[] ivValue = new byte[16];
                 SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-                KeySpec keyspec = new PBEKeySpec(this.bodyTextField.getText().toCharArray(), salt.getEncoded(), 1000, 128);
+                KeySpec keyspec = new PBEKeySpec(this.bodyTextField.getText().toCharArray(), salt.getEncoded(), 10000, 128);
                 SecretKey sKey = factory.generateSecret(keyspec);
                 System.out.println(sKey.getClass().getName());
                 System.out.println(Arrays.toString(sKey.getEncoded()));
