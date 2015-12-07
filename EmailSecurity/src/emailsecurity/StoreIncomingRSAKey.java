@@ -179,7 +179,7 @@ public class StoreIncomingRSAKey extends JFrame implements ActionListener{
             byte[] decodedSalt = Base64.getDecoder().decode(SaltInString);
             SecretKey salt = new SecretKeySpec(decodedSalt, "AES");
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            KeySpec keyspec = new PBEKeySpec(this.passwordField.getText().toCharArray(), salt.getEncoded(), 1000, 128);
+            KeySpec keyspec = new PBEKeySpec(this.passwordField.getText().toCharArray(), salt.getEncoded(), 10000, 128);
             SecretKey sKey = factory.generateSecret(keyspec);
             byte[] decodedIV = Base64.getDecoder().decode(IVInString);
             SecretKey sIV = new SecretKeySpec(decodedIV, "AES");
