@@ -13,12 +13,12 @@ Widespread usage of e-mail services with such absurd privacy policies has been o
 #Solution
 We have developed a fully functional email client in Java, that will utilize the PGP structure, i.e. use RSA keys for establishing secure channel and then using AES and SHA256 for ecryption and data integration. The client will share the RSA keys via email service provider by ecrypting them with a password based key (using PBKDF), thus eliminating the possibility of the email service provider acting as a man in the middle (active adversary).
 
-#How to use
-• Download the Final_Distributable.zip
-• Extract the contents
-• Open the accountDetailsFile.txt and edit the file in the following manner- 
+#How to use<br>
+• Download the Final_Distributable.zip<br>
+• Extract the contents<br>
+• Open the accountDetailsFile.txt and edit the file in the following manner-<br>
 <hr>
-<sender's email address><br>
+&#60sender&#96s email address&#62<br>
 <sender's user name><br>
 <sender's password><br>
 
