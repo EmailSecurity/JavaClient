@@ -18,7 +18,7 @@ We have developed a fully functional email client in Java, that will utilize the
 • Extract the contents<br>
 • Open the accountDetailsFile.txt and edit the file in the following manner-<br>
 <hr>
-&#60sender&#96s email address&#62<br>
+&lt;sender's email address><br>
 <sender's user name><br>
 <sender's password><br>
 
