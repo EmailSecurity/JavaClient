@@ -2,8 +2,7 @@
 Standalone Java based secure email client.
 
 #Authors
-Akash Singh
-Abhijeet Ranadive
+Akash Singh &amp; Abhijeet Ranadive
 
 
 #Motivation
