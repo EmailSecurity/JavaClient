@@ -19,17 +19,9 @@ We have developed a fully functional email client in Java, that will utilize the
 • Open the accountDetailsFile.txt and edit the file in the following manner-<br>
 <hr>
 &lt;sender's email address><br>
-<sender's user name><br>
-<sender's password><br>
+&lt;sender's user name><br>
+&lt;sender's password><br>
+<hr>
 
-Platform <br>
-Java Virtual Machine (JVM)
-Cross platform since JVM is supported on Linux, Unix, Windows and Android Operating Systems
-
-Language <br>
-• Java Programming Language<br>
-• Structured Query Language 3.3 Components<br>
-
-Components <br>
-• Java Cryptographic Libraries<br> • RSA key pairs<br>
-• mySQL Database
+#Working details
+For understanding the internal working of the client please go through Email_Security.pdf
