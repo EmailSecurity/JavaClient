@@ -22,6 +22,12 @@ We have developed a fully functional email client in Java, that will utilize the
 &lt;sender's user name><br>
 &lt;sender's password><br>
 <hr>
+• Launch the app using EmailSecurity.jar (Requires Java Runtime Environment 1.8)<br>
+• Click Send Keys (enter recipient and password)<br>
+• Click Fetch Mail<br>
+• Open mail with subject RSA Key (Assuming recipient has also followed the previous step and sent his/her public key)<br>
+• Enter password and wait for Success message<br>
+• Click compose mail and enter recipient to send an encrypted message<br>
 
 #Working details
 For understanding the internal working of the client please go through Email_Security.pdf
